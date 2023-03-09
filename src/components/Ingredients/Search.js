@@ -15,7 +15,7 @@ const Search = React.memo((props) => {
           enteredFilter.length === 0
             ? ""
             : `?orderBy="title"&equalTo="${enteredFilter}"`;
-        fetch(process.env.REACT_APP_FIREBASE_URL + query)
+        fetch(process.env.REACT_APP_FIREBASE_URL + "ingredients.json" + query)
           .then((response) => response.json())
           .then((responseData) => {
             const loadedIngredients = [];

@@ -6,13 +6,13 @@ import IngredientList from "./IngredientList";
 
 function Ingredients() {
   const [userIngredients, setUserIngredients] = useState([]);
-
+  console.log(`${process.env.REACT_APP_FIREBASE_URL}`);
   const filteredIngredientsHandler = useCallback((filteredIngredients) => {
     setUserIngredients(filteredIngredients);
   }, []);
 
   const addIngredientHandler = (ingredient) => {
-    fetch(process.env.REACT_APP_FIREBASE_URL, {
+    fetch(process.env.REACT_APP_FIREBASE_URL + "ingredients.json", {
       method: "POST",
       body: JSON.stringify(ingredient),
       headers: { "Content-Type": "application/json" },
@@ -29,9 +29,13 @@ function Ingredients() {
   };
 
   const removeIngredientHandler = (ingredientId) => {
-    setUserIngredients((prevIngredients) =>
-      prevIngredients.filter((ingredient) => ingredient.id !== ingredientId)
-    );
+    fetch(`${process.env.REACT_APP_FIREBASE_URL}ingredients/${ingredientId}.json`, {
+      method: "DELETE",
+    }).then((response) => {
+      setUserIngredients((prevIngredients) =>
+        prevIngredients.filter((ingredient) => ingredient.id !== ingredientId)
+      );
+    });
   };
 
   return (
