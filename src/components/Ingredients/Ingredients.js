@@ -21,11 +21,8 @@ const ingredientReducer = (currentIngredients, action) => {
 
 function Ingredients() {
   const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
-  const { isLoading, error, data, sendRequest, reqExtra, reqIdentifier } = useHttp();
-
-  // const [userIngredients, setUserIngredients] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [error, setError] = useState();
+  const { isLoading, error, data, sendRequest, reqExtra, reqIdentifier, clear } =
+    useHttp();
 
   useEffect(() => {
     if (!isLoading && !error && reqIdentifier === "REMOVE_INGREDIENT") {
@@ -36,35 +33,20 @@ function Ingredients() {
   }, [data, reqExtra, reqIdentifier, isLoading, error]);
 
   const filteredIngredientsHandler = useCallback((filteredIngredients) => {
-    // setUserIngredients(filteredIngredients);
     dispatch({ type: "SET", ingredients: filteredIngredients });
   }, []);
 
-  const addIngredientHandler = useCallback((ingredient) => {
-    sendRequest(
-      process.env.REACT_APP_FIREBASE_URL + "ingredients.json",
-      "POST",
-      JSON.stringify(ingredient),
-      "ADD_INGREDIENT"
-    );
-    // dispatchHttp({ type: "SEND" });
-    // fetch(process.env.REACT_APP_FIREBASE_URL + "ingredients.json", {
-    //   method: "POST",
-    //   body: JSON.stringify(ingredient),
-    //   headers: { "Content-Type": "application/json" },
-    // })
-    //   .then((response) => {
-    //     dispatchHttp({ type: "RESPONSE" });
-    //     return response.json();
-    //   })
-    //   .then((responseData) => {
-    //     // setUserIngredients((prevIngredients) => [
-    //     //   ...prevIngredients,
-    //     //   { id: responseData.name, ...ingredient },
-    //     // ]);
-    //     dispatch({ type: "ADD", ingredient: { id: responseData.name, ...ingredient } });
-    //   });
-  }, []);
+  const addIngredientHandler = useCallback(
+    (ingredient) => {
+      sendRequest(
+        process.env.REACT_APP_FIREBASE_URL + "ingredients.json",
+        "POST",
+        JSON.stringify(ingredient),
+        "ADD_INGREDIENT"
+      );
+    },
+    [sendRequest]
+  );
 
   const removeIngredientHandler = useCallback(
     (ingredientId) => {
@@ -79,10 +61,6 @@ function Ingredients() {
     [sendRequest]
   );
 
-  const clearError = useCallback(() => {
-    // dispatchHttp({ type: "CLEAR" });
-  }, []);
-
   const ingredientList = useMemo(() => {
     return (
       <IngredientList
@@ -94,7 +72,7 @@ function Ingredients() {
 
   return (
     <div className="App">
-      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
+      {error && <ErrorModal onClose={clear}>{error}</ErrorModal>}
 
       <IngredientForm onAddIngredient={addIngredientHandler} loading={isLoading} />
 
